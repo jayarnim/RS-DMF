@@ -99,19 +99,24 @@ class Module(nn.Module):
         return rep_item
 
     def _init_layers(self):
-        self.proj_u = nn.Linear(
+        kwargs = dict(
             in_features=self.n_items,
             out_features=self.hidden[0],
             bias=False,
         )
-        self.proj_i = nn.Linear(
+        self.proj_u = nn.Linear(**kwargs)
+
+        kwargs = dict(
             in_features=self.n_users,
             out_features=self.hidden[0],
             bias=False,
         )
+        self.proj_i = nn.Linear(**kwargs)
+
         self.mlp_u = nn.Sequential(
             *list(self._generate_layers(self.hidden))
         )
+
         self.mlp_i = nn.Sequential(
             *list(self._generate_layers(self.hidden))
         )

@@ -115,10 +115,6 @@ class Module(nn.Module):
         self.mlp_i = nn.Sequential(
             *list(self._generate_layers(self.hidden))
         )
-        self.logit_layer = nn.Linear(
-            in_features=self.hidden[-1],
-            out_features=1,
-        )
 
     def _generate_layers(self, hidden):
         idx = 1

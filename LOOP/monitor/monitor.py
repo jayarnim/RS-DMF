@@ -7,6 +7,14 @@ from ..utils.constants import (
     DEFAULT_LABEL_COL,
     DEFAULT_PREDICTION_COL,
     DEFAULT_K,
+    METRIC_FN,
+)
+from ..msr.python_evaluation import (
+    hit_ratio_at_k,
+    precision_at_k, 
+    recall_at_k,
+    map_at_k, 
+    ndcg_at_k, 
 )
 from .early_stopper import EarlyStopper
 from .predictor import EarlyStoppingPredictor
@@ -16,9 +24,9 @@ class EarlyStoppingMonitor:
     def __init__(
         self,
         model,
-        metric_fn,
-        patience,
-        min_delta,
+        metric_fn: METRIC_FN,
+        patience: int,
+        min_delta: float,
         col_user: str=DEFAULT_USER_COL,
         col_item: str=DEFAULT_ITEM_COL,
         col_label: str=DEFAULT_LABEL_COL,
@@ -29,7 +37,6 @@ class EarlyStoppingMonitor:
         self.device = torch.device(DEVICE)
 
         self.model = model.to(self.device)
-        self.metric_fn = metric_fn
         self.patience = patience
         self.min_delta = min_delta
         self.col_user = col_user
@@ -37,6 +44,19 @@ class EarlyStoppingMonitor:
         self.col_label= col_label
         self.col_prediction = col_prediction
         self.top_k = top_k
+
+        if metric_fn=="hr":
+            self.metric_fn = hit_ratio_at_k
+        elif metric_fn=="precision":
+            self.metric_fn = precision_at_k
+        elif metric_fn=="recall":
+            self.metric_fn = recall_at_k
+        elif metric_fn=="map":
+            self.metric_fn = map_at_k
+        elif metric_fn=="ndcg":
+            self.metric_fn = ndcg_at_k
+        else:
+            ValueError(f"Invalid metric function: {metric_fn}")
 
         kwargs = dict(
             model=self.model,

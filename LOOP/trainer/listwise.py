@@ -8,7 +8,7 @@ from ..utils.constants import LOSS_FN_LISTWISE
 from ..loss_fn import listwise
 
 
-class PairwiseTrainer:
+class ListwiseTrainer:
     def __init__(
         self,
         model: nn.Module,

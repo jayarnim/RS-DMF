@@ -100,10 +100,9 @@ class Module(nn.Module):
         return item_rep_slice
 
     def _set_up_components(self):
-        self._create_embeddings()
         self._create_layers()
 
-    def _create_embeddings(self):
+    def _create_layers(self):
         kwargs = dict(
             in_features=self.n_items,
             out_features=self.hidden[0],
@@ -118,7 +117,6 @@ class Module(nn.Module):
         )
         self.proj_i = nn.Linear(**kwargs)
 
-    def _create_layers(self):
         components = list(self._yield_layers(self.hidden))
         self.rep_u = nn.Sequential(*components)
 

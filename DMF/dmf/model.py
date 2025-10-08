@@ -13,6 +13,7 @@ class Module(nn.Module):
         interactions: torch.Tensor, 
     ):
         super(Module, self).__init__()
+
         # attr dictionary for load
         self.init_args = locals().copy()
         del self.init_args["self"]
@@ -29,7 +30,7 @@ class Module(nn.Module):
         )
 
         # generate layers
-        self._init_layers()
+        self._set_up_components()
 
     def forward(
         self, 
@@ -98,7 +99,11 @@ class Module(nn.Module):
 
         return rep_item
 
-    def _init_layers(self):
+    def _set_up_components(self):
+        self._create_embeddings()
+        self._create_layers()
+
+    def _create_embeddings(self):
         kwargs = dict(
             in_features=self.n_items,
             out_features=self.hidden[0],
@@ -113,15 +118,14 @@ class Module(nn.Module):
         )
         self.proj_i = nn.Linear(**kwargs)
 
-        self.mlp_u = nn.Sequential(
-            *list(self._generate_layers(self.hidden))
-        )
+    def _create_layers(self):
+        components = list(self._yield_layers(self.hidden))
+        self.mlp_u = nn.Sequential(*components)
 
-        self.mlp_i = nn.Sequential(
-            *list(self._generate_layers(self.hidden))
-        )
+        components = list(self._yield_layers(self.hidden))
+        self.mlp_i = nn.Sequential(components)
 
-    def _generate_layers(self, hidden):
+    def _yield_layers(self, hidden):
         idx = 1
         while idx < len(hidden):
             yield nn.Linear(hidden[idx-1], hidden[idx])

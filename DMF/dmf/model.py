@@ -79,9 +79,9 @@ class Module(nn.Module):
         user_proj_slice = self.proj_u(user_interaction_slice.float())
         
         # representation learning
-        user_embed_slice = self.mlp_u(user_proj_slice)
+        user_rep_slice = self.rep_u(user_proj_slice)
 
-        return user_embed_slice
+        return user_rep_slice
 
     def item_hist_embed_generator(self, user_idx, item_idx):
         # get item vector from interactions
@@ -95,9 +95,9 @@ class Module(nn.Module):
         item_proj_slice = self.proj_i(item_interaction_slice.float())
         
         # representation learning
-        item_embed_slice = self.mlp_i(item_proj_slice)
+        item_rep_slice = self.rep_i(item_proj_slice)
 
-        return item_embed_slice
+        return item_rep_slice
 
     def _set_up_components(self):
         self._create_embeddings()
@@ -120,10 +120,10 @@ class Module(nn.Module):
 
     def _create_layers(self):
         components = list(self._yield_layers(self.hidden))
-        self.mlp_u = nn.Sequential(*components)
+        self.rep_u = nn.Sequential(*components)
 
         components = list(self._yield_layers(self.hidden))
-        self.mlp_i = nn.Sequential(components)
+        self.rep_i = nn.Sequential(components)
 
     def _yield_layers(self, hidden):
         idx = 1

@@ -64,9 +64,9 @@ class CustomizedTrainer:
             epoch=epoch,
             n_epochs=n_epochs,
         )
-        val_task_loss = self._epoch_val_step(**kwargs)
+        val_loss = self._epoch_val_step(**kwargs)
 
-        return trn_loss, val_task_loss, computing_cost
+        return trn_loss, val_loss, computing_cost
 
     def _epoch_trn_step(
         self,
